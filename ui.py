@@ -1,10 +1,36 @@
 import storage
 
 
-def print_current_day(count="no"):
+def print_todays_date(NOW):
+    print(f"Today's date: {NOW}")
+    print()
+
+
+def print_other_date(user_date):
+    print(f"You are now editing date: {user_date}")
+    print()
+
+
+def print_menu():
+    print("Menu:\n"
+          "(s) schedule a new meeting\n"
+          "(c) cancel an existing meeting\n"
+          "(d) date change\n"
+          "(q) quit")
+
+
+def print_menu_other_date():
+    print("Menu:\n"
+          "(s) schedule a new meeting\n"
+          "(c) cancel an existing meeting\n"
+          "(d) back to today's date\n"
+          "(q) quit")
+
+
+def print_current_day_events(count="no"):
     schedule = storage.read_from_file()
     if schedule:
-        print("Your schedule for today: ")
+        print("Your schedule for the day: ")
     schedule = [x.strip() for x in schedule]
     if count == "yes":
         for i in range(len(schedule)):
@@ -54,10 +80,27 @@ def gather_hours(title=""):
     return user_input
 
 
-def print_menu():
-    print("Menu:\n"
-          "(s) schedule a new meeting\n"
-          "(c) cancel an existing meeting\n"
-          "(q) quit")
+def gather_date(title=""):
+    user_input = input(title)
+    dates_lst = user_input.split("/")
+    while len(dates_lst) != 3 or not check_date_format(dates_lst):
+        user_input = input("Pass a correct date format. [dd/mm/yyyy]")
+        dates_lst = user_input.split("/")
+    for num in dates_lst:
+        valid = False
+        while not valid:
+            try:
+                num = int(num)
+                valid = True
+            except ValueError:
+                print("Invalid date type.")     # works only if first input is correct
+                gather_date(title)              # does not work when first "aa/aa/ssss"
+    return user_input                           # and second is correct
 
 
+def check_date_format(dates_lst):
+    date_format = [2, 2, 4]
+    for user_date, expected_format in zip(dates_lst, date_format):
+        if len(user_date) != expected_format:
+            return False
+    return True
