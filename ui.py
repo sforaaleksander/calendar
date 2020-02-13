@@ -7,7 +7,7 @@ def print_todays_date(NOW):
 
 
 def print_other_date(user_date):
-    print(f"You are now editing date: {user_date}")
+    print(f"You are now in date: {user_date}")
     print()
 
 
@@ -27,18 +27,21 @@ def print_menu_other_date():
           "(q) quit")
 
 
-def print_current_day_events(count="no"):
-    schedule = storage.read_from_file()
+def print_current_day_events(current_day, count="no"):
+    schedule = storage.read_from_file(current_day)
     if schedule:
         print("Your schedule for the day: ")
-    schedule = [x.strip() for x in schedule]
-    if count == "yes":
-        for i in range(len(schedule)):
-            print(f"{i+1}.   {schedule[i]}")
-        print()
+        schedule = [x.strip() for x in schedule]
+        if count == "yes":
+            for i in range(len(schedule)):
+                print(f"{i+1}.   {schedule[i]}")
+            print()
+        else:
+            for element in schedule:
+                print(element)
+            print()
     else:
-        for element in schedule:
-            print(element)
+        print("No plans for the day.")
         print()
 
 
@@ -82,10 +85,10 @@ def gather_hours(title=""):
 
 def gather_date(title=""):
     user_input = input(title)
-    dates_lst = user_input.split("/")
+    dates_lst = user_input.split("-")
     while len(dates_lst) != 3 or not check_date_format(dates_lst):
-        user_input = input("Pass a correct date format. [dd/mm/yyyy]")
-        dates_lst = user_input.split("/")
+        user_input = input("Pass a correct date format. [dd-mm-yyyy]")
+        dates_lst = user_input.split("-")
     for num in dates_lst:
         valid = False
         while not valid:
@@ -94,7 +97,7 @@ def gather_date(title=""):
                 valid = True
             except ValueError:
                 print("Invalid date type.")     # works only if first input is correct
-                gather_date(title)              # does not work when first "aa/aa/ssss"
+                gather_date(title)              # does not work when first "aa-aa-ssss"
     return user_input                           # and second is correct
 
 
