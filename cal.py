@@ -30,15 +30,14 @@ def schedule(current_day):
     os.system("clear")
     ui.print_current_day_events(current_day)
     plan_name = ui.gather_input(title="What is your plan? ")
-    start_time = ui.gather_hours(title="When does it start? [hh:mm]")
+    start_time = ui.gather_hours(title="When does it start? [hh:mm] ")
     end_time = ui.gather_hours(title="When does it end? [hh:mm] ")
     if not ui.check_event_conflicts(start_time, end_time, current_day):
-        user_revolve = input("Time conflict found. Do you want to schedule event anyways? [Y/N]")
-        if user_revolve.lower() != "y":
-            schedule(current_day)
+        schedule(current_day)
     hours = f"{str(start_time)} - {str(end_time)}"
     full_entry = f"{hours} ⸻    {plan_name}\n"
     storage.write_to_file(full_entry, current_day)
+    ui.sort_events(current_day)
     if current_day == NOW:
         main()
     else:
@@ -47,11 +46,13 @@ def schedule(current_day):
 
 def cancel(current_day):
     os.system("clear")
+    ui.print_other_date(current_day)
     ui.print_current_day_events(current_day, count="yes")
     meeting_no = ui.gather_input(input_type=int, title="Which event you want to cancel? Type the number: ")
     plans = storage.read_from_file(current_day)
-    del plans[meeting_no-1]
-    storage.update_file(plans, current_day)
+    if plans:
+        del plans[meeting_no-1]
+        storage.update_file(plans, current_day)
     if current_day == NOW:
         main()
     else:
@@ -59,8 +60,8 @@ def cancel(current_day):
 
 
 def go_to_date():
-    user_date = ui.gather_date("Which date do you want to go to? [dd-mm-yyyy]")
     os.system("clear")
+    user_date = ui.gather_date("Which date do you want to go to? [dd-mm-yyyy] ")
     other_day_menu(user_date)
 
 

@@ -65,13 +65,19 @@ def gather_input(possible="all", input_type="all", title=""):
             return user_input
 
 
+# def check_if_hour_not_smaller(start_hour, end_hour):
+
+
 def gather_hours(title=""):
     user_input = input(title)
     hours_lst = user_input.split(":")
     while len(hours_lst) != 2:
         user_input = input("Pass a correct hour format.")
         hours_lst = user_input.split(":")
-
+    while int(hours_lst[1]) < 0 > int(hours_lst[0]) or int(hours_lst[0]) > 24\
+            or 0 > int(hours_lst[1]) > 59:
+        user_input = input("Pass a correct hour format.")
+        hours_lst = user_input.split(":")
     for num in hours_lst:
         valid = False
         while not valid:
@@ -112,7 +118,7 @@ def check_date_format(dates_lst):
 
 def check_event_conflicts(start_hour, end_hour, current_day):
     data = storage.read_from_file(current_day)
-    data = [x.split("⸻    ") for x in data]
+    data = [x.split("⸻") for x in data]
     data = [x[0] for x in data]
     data = [x.split("-") for x in data]
     data = [[hour.strip() for hour in hours] for hours in data]
@@ -123,5 +129,42 @@ def check_event_conflicts(start_hour, end_hour, current_day):
         start_event = datetime.datetime.strptime(event[0], "%H:%M").time()
         end_event = datetime.datetime.strptime(event[1], "%H:%M").time()
         if start_event < start_hour < end_event or start_event < end_hour < end_event:
-            return False
+            user_resolve = input("Time conflict found. Do you want to schedule event anyways? [Y/N] ")
+            if user_resolve.lower() != "y":
+                return False
     return True
+
+
+    # if not ui.check_event_conflicts(start_time, end_time, current_day):
+
+
+def sort_events(current_day):
+    data = storage.read_from_file(current_day)
+    data = [x.split("⸻") for x in data]
+    for event in data:
+        event[0] = event[0].split("-")
+
+    for event in data:
+        event[0][0] = datetime.datetime.strptime(event[0][0].strip(), "%H:%M").time()
+        event[0][1] = datetime.datetime.strptime(event[0][1].strip(), "%H:%M").time()
+        event[1] = event[1].strip(" ")
+
+    data = sorted(data, key=lambda x: x[0][1])
+    data = sorted(data, key=lambda x: x[0][0])
+
+    for event in data:
+        event[0][0] = (event[0][0].strftime("%H:%M")).zfill(2)
+        event[0][1] = event[0][1].strftime("%H:%M").zfill(2)
+        print(event[0][0])
+
+        event[0] = " - ".join(event[0])
+    data = [" ⸻    ".join(e) for e in data]
+
+    storage.update_file(data, current_day)
+
+
+# sort_events("13-02-2020")
+
+
+# timeStr = dateTimeObj.strftime("%H:%M:%S.%f")
+# print('Current Timestamp : ', timeStr)
