@@ -1,4 +1,5 @@
 import storage
+import datetime
 
 
 def print_todays_date(NOW):
@@ -105,5 +106,22 @@ def check_date_format(dates_lst):
     date_format = [2, 2, 4]
     for user_date, expected_format in zip(dates_lst, date_format):
         if len(user_date) != expected_format:
+            return False
+    return True
+
+
+def check_event_conflicts(start_hour, end_hour, current_day):
+    data = storage.read_from_file(current_day)
+    data = [x.split("⸻    ") for x in data]
+    data = [x[0] for x in data]
+    data = [x.split("-") for x in data]
+    data = [[hour.strip() for hour in hours] for hours in data]
+    start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
+    end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
+
+    for event in data:
+        start_event = datetime.datetime.strptime(event[0], "%H:%M").time()
+        end_event = datetime.datetime.strptime(event[1], "%H:%M").time()
+        if start_event < start_hour < end_event or start_event < end_hour < end_event:
             return False
     return True

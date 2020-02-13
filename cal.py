@@ -32,8 +32,12 @@ def schedule(current_day):
     plan_name = ui.gather_input(title="What is your plan? ")
     start_time = ui.gather_hours(title="When does it start? [hh:mm]")
     end_time = ui.gather_hours(title="When does it end? [hh:mm] ")
+    if not ui.check_event_conflicts(start_time, end_time, current_day):
+        user_revolve = input("Time conflict found. Do you want to schedule event anyways? [Y/N]")
+        if user_revolve.lower() != "y":
+            schedule(current_day)
     hours = f"{str(start_time)} - {str(end_time)}"
-    full_entry = f"{hours} : {plan_name}\n"
+    full_entry = f"{hours} ⸻    {plan_name}\n"
     storage.write_to_file(full_entry, current_day)
     if current_day == NOW:
         main()
@@ -68,7 +72,7 @@ def other_day_menu(current_day):
     ui.print_menu_other_date()
     user_choice = ui.gather_input(["s", "c", "d", "q"])
     dictionary_choice = {"s": schedule, "c": cancel}
-    dictionary_choice2 = {"d": go_to_date, "q": quit}
+    dictionary_choice2 = {"d": main, "q": quit}
     if user_choice in dictionary_choice.keys():
         dictionary_choice[user_choice](current_day)
     else:
