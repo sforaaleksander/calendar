@@ -65,7 +65,14 @@ def gather_input(possible="all", input_type="all", title=""):
             return user_input
 
 
-# def check_if_hour_not_smaller(start_hour, end_hour):
+def check_if_hour_not_smaller(start_hour, end_hour):
+    start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
+    end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
+    if start_hour > end_hour:
+        user_resolve = input("Start hour be after end hour. Do you want to schedule anyways? [Y/N] ")
+        if user_resolve.lower() != "y":
+            return False
+    return True
 
 
 def gather_hours(title=""):
