@@ -30,12 +30,14 @@ def schedule(current_day):
     os.system("clear")
     ui.print_current_day_events(current_day)
     plan_name = ui.gather_input(title="What is your plan? ")
-    start_time = ui.gather_hours(title="When does it start? [hh:mm] ")
-    end_time = ui.gather_hours(title="When does it end? [hh:mm] ")
-    if not ui.check_event_conflicts(start_time, end_time, current_day) or not ui.check_if_hour_not_smaller(start_time, end_time):
-        schedule(current_day)
-    # if not ui.check_if_hour_not_smaller(current_day):
-    #     schedule(current_day)
+    valid_hour = False
+    while not valid_hour:
+        start_time = ui.gather_hours(title="When does it start? [hh:mm] ")
+        end_time = ui.gather_hours(title="When does it end? [hh:mm] ")
+        if not ui.check_event_conflicts(start_time, end_time, current_day):
+            schedule(current_day)
+        if ui.check_if_hour_not_smaller(start_time, end_time):
+            valid_hour = True
     hours = f"{str(start_time)} - {str(end_time)}"
     full_entry = f"{hours} ⸻    {plan_name}\n"
     storage.write_to_file(full_entry, current_day)

@@ -69,9 +69,8 @@ def check_if_hour_not_smaller(start_hour, end_hour):
     start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
     end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
     if start_hour > end_hour:
-        user_resolve = input("Start hour be after end hour. Do you want to schedule anyways? [Y/N] ")
-        if user_resolve.lower() != "y":
-            return False
+        input("End hour can not be ahead of start hour. [press any key to continue]")
+        return False
     return True
 
 
@@ -125,24 +124,22 @@ def check_date_format(dates_lst):
 
 def check_event_conflicts(start_hour, end_hour, current_day):
     data = storage.read_from_file(current_day)
-    data = [x.split("⸻") for x in data]
-    data = [x[0] for x in data]
-    data = [x.split("-") for x in data]
-    data = [[hour.strip() for hour in hours] for hours in data]
-    start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
-    end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
+    if data:
+        data = [x.split("⸻") for x in data]
+        data = [x[0] for x in data]
+        data = [x.split("-") for x in data]
+        data = [[hour.strip() for hour in hours] for hours in data]
+        start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
+        end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
 
-    for event in data:
-        start_event = datetime.datetime.strptime(event[0], "%H:%M").time()
-        end_event = datetime.datetime.strptime(event[1], "%H:%M").time()
-        if start_event < start_hour < end_event or start_event < end_hour < end_event:
-            user_resolve = input("Time conflict found. Do you want to schedule event anyways? [Y/N] ")
-            if user_resolve.lower() != "y":
-                return False
+        for event in data:
+            start_event = datetime.datetime.strptime(event[0], "%H:%M").time()
+            end_event = datetime.datetime.strptime(event[1], "%H:%M").time()
+            if start_event < start_hour < end_event or start_event < end_hour < end_event:
+                user_resolve = input("Time conflict found. Do you want to schedule event anyways? [Y/N] ")
+                if user_resolve.lower() != "y":
+                    return False
     return True
-
-
-    # if not ui.check_event_conflicts(start_time, end_time, current_day):
 
 
 def sort_events(current_day):
@@ -168,10 +165,3 @@ def sort_events(current_day):
     data = [" ⸻    ".join(e) for e in data]
 
     storage.update_file(data, current_day)
-
-
-# sort_events("13-02-2020")
-
-
-# timeStr = dateTimeObj.strftime("%H:%M:%S.%f")
-# print('Current Timestamp : ', timeStr)
