@@ -69,7 +69,7 @@ def check_if_hour_not_smaller(start_hour, end_hour):
     start_hour = datetime.datetime.strptime(start_hour, "%H:%M").time()
     end_hour = datetime.datetime.strptime(end_hour, "%H:%M").time()
     if start_hour > end_hour:
-        input("End hour can not be ahead of start hour. [press any key to continue]")
+        input("End hour can not be ahead of start hour. [press any key to continue] ")
         return False
     return True
 
@@ -78,11 +78,7 @@ def gather_hours(title=""):
     user_input = input(title)
     hours_lst = user_input.split(":")
     while len(hours_lst) != 2:
-        user_input = input("Pass a correct hour format.")
-        hours_lst = user_input.split(":")
-    while int(hours_lst[1]) < 0 > int(hours_lst[0]) or int(hours_lst[0]) > 24\
-            or 0 > int(hours_lst[1]) > 59:
-        user_input = input("Pass a correct hour format.")
+        user_input = input("Pass a correct hour format. ")
         hours_lst = user_input.split(":")
     for num in hours_lst:
         valid = False
@@ -93,15 +89,24 @@ def gather_hours(title=""):
             except ValueError:
                 print("Invalid hour type.")
                 user_input = input(title)
+    while int(hours_lst[1]) < 0 > int(hours_lst[0]) or int(hours_lst[0]) > 24\
+            or 0 > int(hours_lst[1]) > 59:
+        user_input = input("Pass a correct hour format. ")
+        hours_lst = user_input.split(":")
+
     return user_input
 
 
 def gather_date(title=""):
     user_input = input(title)
     dates_lst = user_input.split("-")
-    while len(dates_lst) != 3 or not check_date_format(dates_lst):
-        user_input = input("Pass a correct date format. [dd-mm-yyyy]")
+    while len(dates_lst) != 3 or not check_date_format(dates_lst) or not check_date_int(dates_lst):
+        user_input = input("Pass a correct date format. [dd-mm-yyyy] ")
         dates_lst = user_input.split("-")
+    return user_input
+
+
+def check_date_int(dates_lst):
     for num in dates_lst:
         valid = False
         while not valid:
@@ -109,9 +114,8 @@ def gather_date(title=""):
                 num = int(num)
                 valid = True
             except ValueError:
-                print("Invalid date type.")     # works only if first input is correct
-                gather_date(title)              # does not work when first "aa-aa-ssss"
-    return user_input                           # and second is correct
+                return False
+    return True
 
 
 def check_date_format(dates_lst):
